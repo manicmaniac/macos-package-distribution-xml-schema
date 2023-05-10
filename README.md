@@ -1,6 +1,6 @@
 # macos-package-distribution-xml-schema
 
-An unofficial XML schema of macOS Package Distribution Definition.
+An unofficial XML schema of macOS Package Distribution Definition XML.
 
 Based on [Distribution Definition XML Schema Reference](https://developer.apple.com/library/archive/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html).
 
