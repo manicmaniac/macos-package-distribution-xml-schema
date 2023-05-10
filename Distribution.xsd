@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://developer.apple.com/library/archive/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="allowed-os-versions">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines OS version requirements.</p><p>These consist of one or more version ranges, specified as <code>os-version</code> elements.</p><p>The version of the operating system on the target volume must fall into one of these ranges to allow installation.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="os-version"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="bundle-id">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[-.0-9A-Za-z]{1,155}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="app">
+    <xsd:annotation>
+      <xsd:documentation>Identifies an application that must be closed before the package is installed.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="id" type="bundle-id" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="auxinfo"/>
+
+  <xsd:simpleType name="uti">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[-.0-9A-Za-z]+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="alignment">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="center"/>
+      <xsd:enumeration value="left"/>
+      <xsd:enumeration value="right"/>
+      <xsd:enumeration value="top"/>
+      <xsd:enumeration value="bottom"/>
+      <xsd:enumeration value="topleft"/>
+      <xsd:enumeration value="topright"/>
+      <xsd:enumeration value="bottomleft"/>
+      <xsd:enumeration value="bottomright"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="scaling">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="tofit"/>
+      <xsd:enumeration value="none"/>
+      <xsd:enumeration value="proportional"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="background">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines a background image for the Installer.</p><p>You must provide either the <code>mime-type</code> or <code>uti</code> attribute. If you provide both, they must be consistent.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="alignment" type="alignment" use="optional" default="center">
+        <xsd:annotation>
+          <xsd:documentation><p>The alignment used to render the background image.</p><p>Only used by the Installer.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="file" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>The filename of an image in the distribution package</p><p>for example, <code>background.png</code> or <code>./background.png</code>.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mime-type" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The standard MIME type of the image.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="scaling" type="scaling" use="optional" default="tofit">
+        <xsd:annotation>
+          <xsd:documentation>The scaling used to render the background image.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="uti" type="uti" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The UTI type of the image. This attribute is provided because some file types don’t have a MIME type.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="bundle">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines a single bundle.</p><p>The meaning of this element differs considerably depending on its parent element; see the parent element's documentation for details.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="CFBundleShortVersionString" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The short version string of the bundle, as defined in its <code>Info.plist</code> file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="CFBundleVersion" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The bundle's version, as defined in its <code>Info.plist</code> file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="id" type="bundle-id" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The identifier of the bundle - that is, the value of <code>CFBundleIdentifier</code> in the bundle's <code>Info.plist</code> file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="path" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>The path at which the bundle is installed, relative to where the package is installed.</p><p>For example, <code>Applications/Sample.app</code>.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="search" type="xsd:boolean" use="optional" default="false">
+        <xsd:annotation>
+          <xsd:documentation><p>Indicates whether to search for the bundle by its identifier if it is not found at the given path.</p><p>Only valid when this element is a child of a <code>required-bundles</code> element.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="BuildVersion" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="SourceVersion" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="bundle-version">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines the version of the bundles delivered by the parent element.</p><p>You do not typically specify this element; <code>productbuild</code> inserts it from the actual package data when the product archive is created.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="bundle"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="absolute-path">
+    <xsd:restriction base="xsd:anyURI">
+      <xsd:pattern value="/.*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="boolean-js-expression">
+    <xsd:union memberTypes="xsd:boolean xsd:string"/>
+  </xsd:simpleType>
+
+  <xsd:element name="choice">
+    <xsd:annotation>
+      <xsd:documentation>Defines an installation choice of a distribution package.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="pkg-ref"/>
+      </xsd:choice>
+      <xsd:attribute name="customLocation" type="absolute-path" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>Specifies the default installation location, within the installation volume, for this choice. Implies that the user can choose a different installation location. If unspecified, the user cannot choose the installation location for this choice.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="customLocationAllowAlternateVolumes" type="xsd:boolean" use="optional" default="false">
+        <xsd:annotation>
+          <xsd:documentation>Optional if customLocation is specified; otherwise, not allowed. Specifies whether the user can choose the installation volume.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="description" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>Required for packages that use the Installer; otherwise, optional. Specifies the description of the installation choice. Localizable.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="description-mime-type" use="optional" default="text/plain">
+        <xsd:annotation>
+          <xsd:documentation>The MIME type of the text data in the description attribute.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="text/plain"/>
+            <xsd:enumeration value="text/rtf"/>
+            <xsd:enumeration value="text/html"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="enabled" type="boolean-js-expression" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether the user can select or deselect this option in the Installer customization pane. If <code>false</code>, or a JavaScript expression that evaluates to <code>false</code>, the choice is dimmed so the user cannot select or deselect it. Re-evaluated as the user interacts with the choice tree, so a choice can be enabled or disabled based on the state of other choices.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="id" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Unique identifier of the installation choice, used to bind this element to the <code>line</code> element that determines its position in the installation-choice hierarchy.</p><p>Must match the <code>choice</code> attribute of exactly one <code>line</code> element.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="selected" type="boolean-js-expression" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether this option is selected or deselected for installation. If <code>false</code>, or a JavaScript expression that evaluates to <code>false</code>, the choice will not be installed. In general, you should not declare this attribute on a choice that is visible and enabled, because it can interfere with the user's selections.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="start_enabled" type="xsd:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether this option is initially enabled in the Installer customization pane.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="start_selected" type="xsd:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether this option is initially selected or deselected for installation.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="start_visible" type="xsd:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether this option is initially visible in the Installer customization pane.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="title" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation>Specifies the title of the installation choice. Localizable.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="visible" type="boolean-js-expression" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies whether this option is visible in the Installer customization pane. If <code>false</code>, or a JavaScript expression that evaluates to <code>false</code>, the choice is hidden from the user.</p><p>Avoid making choices appear and disappear while the user is interacting with the installation process. This provides a poor user experience.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="bundle" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="customLocationIsSelfContained" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="tooltip" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="versStr" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="choices-outline">
+    <xsd:annotation>
+      <xsd:documentation>Defines the installation-choice hierarchy of a distribution package.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="line"/>
+      </xsd:choice>
+      <xsd:attribute name="ui" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="conclusion">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies text that is displayed by Installer at the end of the installation process.</p><p>You must provide either the <code>mime-type</code> or <code>uti</code> attribute. If you provide both, they must be consistent.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="file" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The filename of the conclusion file in the distribution package - for example, <code>conclusion.rtf</code>.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mime-type" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The MIME-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="uti" type="uti" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The UTI-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="language" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="domains">
+    <xsd:annotation>
+      <xsd:documentation>Indicates what domains the package may be installed into.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="enable_anywhere" type="boolean-js-expression" use="required">
+        <xsd:annotation>
+          <xsd:documentation>If <code>true</code>, or a JavaScript expression that evaluates to <code>true</code>, the product can be installed at the root of any volume, including nonsystem volumes. Otherwise, it cannot be installed at the root of a volume.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="enable_currentUserHome" type="boolean-js-expression" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>If <code>true</code>, or a JavaScript expression that evaluates to <code>true</code>, the product can be installed into the current user's home directory. Otherwise, it cannot be installed in the current user's home directory.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="enable_localSystem" type="boolean-js-expression" use="required">
+        <xsd:annotation>
+          <xsd:documentation>If <code>true</code>, or a JavaScript expression that evaluates to <code>true</code>, the product can be installed into the root directory. This attribute should usually be <code>true</code> unless the product can be installed only to the user's home directory.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="installation-check">
+    <xsd:annotation>
+      <xsd:documentation>Specifies whether the installation host meets the distribution's system requirements. The installation check passes if the script returns <code>true</code>, any RAM requirements are met, and any graphics requirements are met.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="ram"/>
+        <xsd:element ref="required-graphics"/>
+      </xsd:all>
+      <xsd:attribute name="script" type="boolean-js-expression" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies whether the requirements are met. If <code>true</code> (default), or a Boolean JavaScript expression that evaluates to <code>true</code>, the installation proceeds, subject to the other checks.</p><p>If the script evaluates to <code>false</code>, it must also set <code>my.result.type</code> and <code>my.result.message</code> to indicate the severity of the problem and provide a message to display. If <code>my.result.type</code> is <code>Warning</code>, the installation may be allowed to proceed after informing the user.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="installer-gui-script">
+    <xsd:annotation>
+      <xsd:documentation>The root element of the distribution definition. All other elements in the distribution definition file are children of this element.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="background" maxOccurs="1"/>
+        <xsd:element ref="choice" minOccurs="1"/>
+        <xsd:element ref="choices-outline" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="conclusion" maxOccurs="1"/>
+        <xsd:element ref="domains" maxOccurs="1"/>
+        <xsd:element ref="installation-check" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="license" maxOccurs="1"/>
+        <xsd:element ref="locator"/>
+        <xsd:element ref="options" maxOccurs="1"/>
+        <xsd:element ref="pkg-ref" minOccurs="1"/>
+        <xsd:element ref="product" maxOccurs="1"/>
+        <xsd:element ref="readme" maxOccurs="1"/>
+        <xsd:element ref="script" maxOccurs="1"/>
+        <xsd:element ref="title" minOccurs="1" maxOccurs="1"/>
+        <xsd:element ref="volume-check" maxOccurs="1"/>
+        <xsd:element ref="welcome" maxOccurs="1"/>
+      </xsd:choice>
+      <xsd:attribute name="minSpecVersion" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The schema version of a distribution file. Use <code>1</code> for the version used prior to OS X v10.6.6, or <code>2</code> after that.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:positiveInteger">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="2"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="maxSpecVersion" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="verifiedSpecVersion" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="license">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies text that is displayed by Installer during the installation process.</p><p>You must provide either the <code>mime-type</code> or <code>uti</code> attribute. If you provide both, they must be consistent.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="file" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The filename of the welcome file in the distribution package - for example, <code>welcome.rtf</code>.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mime-type" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The MIME-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="uti" type="uti" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The UTI-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="auto" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="language" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="sla" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="line">
+    <xsd:annotation>
+      <xsd:documentation>Defines where a choice fits into the installation-choice hierarchy of a distribution package.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="line"/>
+      </xsd:choice>
+      <xsd:attribute name="choice" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Identifies the installation choice associated with this node of the installation-choice hierarchy of a distribution package. The value must match the ID of a <code>choice</code> element. See <code>choice</code>.</p><p>Do not reference the same ID from more than one line element, not even from different <code>installation-choice</code> hierarchies; if you do so, the behavior is undefined.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="localization"/>
+
+  <xsd:element name="locator">
+    <xsd:annotation>
+      <xsd:documentation>Defines a search rule for finding software that is already installed on the system.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="search"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="must-close">
+    <xsd:annotation>
+      <xsd:documentation><p>Identifies applications that must be closed before the package is installed.</p><p>Applications are considered only if the package that contains this element has been selected for installation.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="app"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="comma-separated-archs">
+      <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(i386|x86_64|ppc|arm64)(,(i386|x86_64|ppc|arm64)){0,3}"/>
+      </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="options">
+    <xsd:annotation>
+      <xsd:documentation>Specifies the installation properties of a package within the distribution.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="allow-external-scripts" type="xsd:boolean" use="optional" default="false">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies whether the <code>run</code> and <code>runOnce</code> JavaScript functions can be executed.</p><p>For information about these functions, see System in <a href="https://developer.apple.com/documentation/installerjs">Installer JavaScript Reference</a>.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="customize" use="optional" default="allow">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether the user can customize the installation by selecting or deselecting installation choices. Values: <code>allow</code> (default) gives the user an opportunity to customize the installation, <code>always</code> presents the customization view automatically. <code>never</code> does not provide access to the customization view.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="allow"/>
+            <xsd:enumeration value="always"/>
+            <xsd:enumeration value="never"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="hostArchitectures" type="comma-separated-archs" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>A comma-separated list of supported architecture codes.</p><p>Note that <code>i386</code> matches both 32-bit and 64-bit systems, but <code>x86_64</code> matches only 64-bit systems.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mpkg" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Identifies a package (<code>pkg-ref</code> element) whose installation operations must be performed as part of the installation of this distribution.</p><p>Deprecated.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="require-scripts" type="xsd:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation><p> If this value is <code>false</code>, all attributes whose value may be a JavaScript expression must be set to either <code>true</code> or <code>false</code>.</p><p>Available in OS X v10.6.6 and later.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="rootVolumeOnly" type="xsd:boolean" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies whether the user can choose an installation volume other than the boot volume.</p><p>Deprecated. Use <code>domains</code> instead.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="type" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="visibleOnlyForPredicate" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="os-version">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines a range of supported OS versions.</p><p>This element is designed for you to use a specific OS version number for the <code>min</code> attribute, and a major OS version number for the <code>before</code> attribute. The expectation is that you will know an exact minimum version but not an exact major version. This keeps you from having to guess the last minor revision before the next major revision, as you would have to do if the <code>before</code> attribute were inclusive.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="before" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The maximum allowed version (exclusive). If the OS version is greater than or equal to this version, installation will be disallowed (unless the OS falls in the range of another <code>os-version</code> element). If no value is given, there is no upper bound on the range - any version newer than the minimum is allowed.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="min" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The minimum allowed version (inclusive). If the OS is less than this version, installation will be disallowed (unless the OS falls in the range of another <code>os-version</code> element).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="pkg-ref">
+    <xsd:annotation>
+      <xsd:documentation>References a component package that can be installed.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType mixed="true">
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="must-close" maxOccurs="1"/>
+        <xsd:element ref="bundle-version" maxOccurs="1"/>
+        <xsd:element ref="relocate"/>
+      </xsd:choice>
+      <xsd:attribute name="active" type="boolean-js-expression" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation><p>Indicates whether the package is installed.</p><p>If <code>false</code>, or a JavaScript expression that evaluates to <code>false</code>, the package is not installed, even if its associated choice was selected.</p><p>This provides an additional way to activate and deactivate packages. It overrides the setting on the parent element.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="auth" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Defines the authorization level needed to install this package.</p><p>Deprecated. The installation domain determines the necessary authorization level.</p></xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="none"/>
+            <xsd:enumeration value="root"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="id" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Uniquely identifies a component package within a distribution package - for example, <code>com.apple.TextEdit.pkg</code>. The value of this attribute is usually the same as the component package's identifier, but it is not required to be the same.</p><p>If there are multiple <code>pkg-ref</code> elements with the same ID, their attributes will be collapsed together as if they were specified with a single element. In particular, a <p>pkg-ref</p> element with only an ID can be used inside of a <code>choice</code> element to bind that choice to a <code>pkg-ref</code> that is more fully defined elsewhere in the distribution file.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="installKBytes" type="xsd:integer" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies the size of the package's payload in kilobytes.</p><p>You typically omit this attribute because <code>productbuild</code> sets it from the actual package when the product archive is created.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="onConclusion" use="optional" default="None">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies the action to take after the installation has finished.</p><p>The Installer takes the highest value from all enabled packages and requires the associated action.</p></xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="RequireLogout"/>
+            <xsd:enumeration value="RequireRestart"/>
+            <xsd:enumeration value="RequireShutdown"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="onConclusionScript" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>A JavaScript expression that evaluates to one of the string values expected for <code>onConclusion</code>. If this attribute is present, any <code>onConclusion</code> attribute is ignored.</p><p>Available in OS X v10.7 and later.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="version" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies the version of the package's payload.</p><p>You typically omit this attribute because <code>productbuild</code> will set it from the actual package when the product archive is created.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="archiveKBytes" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="packageIdentifier" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="product">
+    <xsd:annotation>
+      <xsd:documentation><p>Defines a top-level product identifier and version. Used for distributing via the App Store.</p><p>Available in OS X v10.6.6 and later.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="id" type="bundle-id" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The top-level product identifier. The value should be the same as the bundle identifier of the contained application.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="version" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The version string for the top-level product. The value should be the same as the short version string of the contained application.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ram">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies the minimum amount of RAM that the system must have.</p><p>Available in OS X v10.6.6 and later.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="min-gb" type="xsd:nonNegativeInteger" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>The minimum required RAM in gigabytes.</p><p>(Consistent with how sizes are displayed in OS X v10.6 and later, a gigabyte is defined as 10^9 bytes, not 2^30 bytes.)</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="readme">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies text that is displayed by Installer during the installation process.</p><p>You must provide either the <code>mime-type</code> or <code>uti</code> attribute. If you provide both, they must be consistent.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="file" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The filename of the readme file in the distribution package. For example, <code>readme.rtf</code>.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mime-type" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The MIME-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="uti" type="uti" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The UTI-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="language" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="relocate">
+    <xsd:annotation>
+      <xsd:documentation>Describes a relocatable bundle. Relocatable bundles allow the user to install an upgrade in the same path as the current version. The path is located by the <code>search</code> element whose ID is specified by the <code>search-id</code> attribute. The bundle is specified by the child <code>bundle</code> element. For example, application bundles are typically relocatable.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="bundle"/>
+      </xsd:sequence>
+      <xsd:attribute name="search-id" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies the ID of the <code>search</code> element whose results are applied to the bundle that is this element's child element.</p><p>If the search returns <code>false</code>, the relocate does nothing. If the search returns an array of results, the first result is used.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="required-bundles">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies bundles that must be already installed on the system.</p><p>If the child <code>bundle</code> element has a version specified, this is interpreted as the minimum supported version for that bundle. It may also have its <code>search</code> attribute set to <code>true</code>, indicating that the bundle should be located by its identifier if it doesn’t exist at the specified path.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="bundle"/>
+      </xsd:choice>
+      <xsd:attribute name="all" type="xsd:boolean" use="optional" default="true">
+        <xsd:annotation>
+          <xsd:documentation><code>true</code> (default) to require all of the specified bundles, or <code>false</code> to require at least one of them.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="description" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>A description of the required bundles, displayed to the user if the requirement is not met.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="required-cl-device" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies requirements that must be met by at least one OpenCL device.</p><p>Available in OS X v10.7 and later.</p></xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="required-gl-renderer" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies requirements that must be met by at least one OpenGL hardware renderer.</p><p>Available in OS X v10.6.8 and later.</p></xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="required-graphics">
+    <xsd:annotation>
+      <xsd:documentation>Specifies GPU requirements.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="required-cl-device"/>
+        <xsd:element ref="required-gl-renderer"/>
+      </xsd:all>
+      <xsd:attribute name="description" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>A description of the graphics requirement. Localizable.</p><p>If no description is specified, a generic message is used. It is generally best to use the generic message unless the requirements are very straightforward.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="single-device" type="xsd:boolean" use="optional" default="false">
+        <xsd:annotation>
+          <xsd:documentation><code>false</code> (default) to allow the OpenCL and OpenGL requirements to be met by different devices, or <code>true</code> to require a single device to simultaneously meet both requirements.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="script">
+    <xsd:annotation>
+      <xsd:documentation>Defines a set of JavaScript functions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="language" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="search">
+    <xsd:annotation>
+      <xsd:documentation>Defines a search rule for finding installed software. The result should be used by another search rule or bound to a bundle via a <code>relocate</code> element.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="1">
+        <xsd:element ref="bundle"/>
+        <xsd:element ref="script"/>
+      </xsd:choice>
+      <xsd:attribute name="id" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation>Uniquely identifies the search; used in the <code>search-id</code> attribute of other elements to reference this search.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="script" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Required if <code>type</code> is <code>script</code>; otherwise, not allowed.</p><p>A JavaScript expression that evaluates to <code>false</code>, a path as a string, or an array of paths. If it returns an array of paths, the first one is the preferred path.</p><p>This expression can be a function call, but the called function must be defined in the child <code>script</code> element.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="search-id" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Optional if <code>type</code> is <code>component</code>; otherwise, not allowed.</p><p>The ID of another search. The other search is performed, and its results further filtered by removing those results that don't match the version strings given by the child <code>bundle</code> element. This allows the other search to be qualified for certain values of <code>CFBundleShortVersionStrings</code> or <code>CFBundleVersions</code>.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="search-path" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation><p>Optional if <code>type</code> is <code>component</code>; otherwise, not allowed.</p><p>A path to a bundle. If there is a bundle at this path that matches the version string of this element's child <code>bundle</code> element, then the path is used as the search result.</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="type" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Indicates the type of the search.</p><p><code>component</code> Search for a bundle on disk that matches the identifier and version strings given by the child <code>bundle</code> element. By default, the Installer uses Launches Services to perform the search, and it searches only the volume that the user selected as the installation target. The <code>search-id</code> and <code>search-path</code> attributes modify this behavior.</p><p><code>script</code> Search by evaluating the JavaScript code contained in the <code>script</code> attribute.</p></xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="component"/>
+            <xsd:enumeration value="script"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="strings">
+    <xsd:annotation>
+      <xsd:documentation><em>Reserved.</em></xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="tag">
+    <xsd:annotation>
+      <xsd:documentation><em>Reserved.</em></xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="tags">
+    <xsd:annotation>
+      <xsd:documentation><em>Reserved.</em></xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="title" type="xsd:string">
+    <xsd:annotation>
+      <xsd:documentation>Defines the title of the product.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="volume-check">
+    <xsd:annotation>
+      <xsd:documentation>Specifies whether a particular volume meets the distribution's volume requirements. All of the tests in the <code>script</code> attribute and the child elements must pass.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element ref="allowed-os-versions"/>
+        <xsd:element ref="required-bundles"/>
+      </xsd:all>
+      <xsd:attribute name="script" type="boolean-js-expression" use="required">
+        <xsd:annotation>
+          <xsd:documentation><p>Specifies whether the requirements for installing on a particular volume are met.</p><p>If the script evaluates to <code>false</code>, it must also set <code>my.result.type</code> and <code>my.result.message</code> to indicate the severity of the problem and provide a message to display.</p><p>The property <code>my.target.mountpoint</code> contains the mount point of the volume being checked</p></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="welcome">
+    <xsd:annotation>
+      <xsd:documentation><p>Specifies text that is displayed by Installer at the beginning of the installation process.</p><p>You must provide either the <code>mime-type</code> or <code>uti</code> attribute. If you provide both, they must be consistent.</p></xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="file" type="xsd:anyURI" use="required">
+        <xsd:annotation>
+          <xsd:documentation>The filename of the welcome file in the distribution package - for example, <code>welcome.rtf</code>.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="mime-type" type="xsd:string" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The MIME-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="uti" type="uti" use="optional">
+        <xsd:annotation>
+          <xsd:documentation>The UTI-type specifier for the data contained in the file.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="language" use="prohibited">
+        <xsd:annotation>
+          <xsd:documentation><em>Reserved.</em></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
