@@ -1,0 +1,11 @@
+name: Validate
+on: push
+jobs:
+  validate:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: sudo apt-get install libxml2-utils
+    - name: Validate schema
+      run: curl -Ss https://www.w3.org/2009/XMLSchema/XMLSchema.xsd | xmllint --schema - --noout Distribution.xsd
