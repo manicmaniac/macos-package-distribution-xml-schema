@@ -1,0 +1,6 @@
+[submodule "vendor/dtd2vim"]
+	path = vendor/dtd2vim
+	url = https://github.com/vim-scripts/dtd2vim.git
+[submodule "vendor/perlSGML"]
+	path = vendor/perlSGML
+	url = https://github.com/manicmaniac/perlSGML.git

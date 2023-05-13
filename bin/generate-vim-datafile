@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+xsltproc vendor/xsd2dtd.xsl Distribution.xsd > macos_package_distribution.dtd
+perl -I vendor/OSUtil -I vendor/perlSGML/lib vendor/dtd2vim/dtd2vim macos_package_distribution.dtd macos_package_distribution
+rm macos_package_distribution.dtd
+mv macos_package_distribution.vim autoload/xml
