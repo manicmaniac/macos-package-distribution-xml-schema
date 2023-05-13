@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git archive --format tar.gz HEAD README.md LICENSE autoload > macos-package-distribution-xml-schema.tar.gz
